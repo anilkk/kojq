@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>IPL Match score</title>
+</head>
+<body>
+
+<ul id="biebster-tweets">
+	<script id="tweets-template" type="text/x-handlebars-template">
+		{{#each this}}
+		<li>
+			<img src="{{thumb}}" alt="{{author}}">
+			<p><a href="{{url}}">{{tweet}}</a></p>
+		</li>
+		{{/each}}
+	</script>		
+</ul>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+
+(function() {
+
+	 var Match = {
+	 	init : function () {
+	 		this.url =	'http://dynamic.pulselive.com/dynamic/data/bcci/2013/ipl2013/customTweet.js?_' + (new Date()).getTime() + '=&callback=onCustomTweet';
+	 		this.fetchMatchInfo();
+	 	},
+	 	fetchMatchInfo: function  () {
+	 		$.ajax({
+        url: 'http://dynamic.pulselive.com/dynamic/data/bcci/2013/ipl2013/customTweet.js?_' + (new Date()).getTime() + '=',
+        dataType: 'jsonp',
+        jsonpCallback: 'onCustomTweet',
+        success: function (data) {
+ 			Match.updateMatchNumber(data);
+ 			Match.showScore();
+        }
+	 	});
+	 },
+	 updateMatchNumber : function (data) {
+	 	// update the match number
+	    this.matchNumber = data.text[data.text.search("Match") + 6] + data.text[data.text.search("Match") + 7];
+	 },
+	 showScore: function () {
+	 	var k = this.getScore();
+	 	console.log(k);
+	 },
+	 getScore: function () {
+	 	        $.ajax({
+            url: 'http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2013/ipl2013-' + this.matchNumber + '/scoring.js?_' + (new Date()).getTime() + '=',
+            dataType: 'jsonp',
+            jsonpCallback: 'onScoring',
+            success: function (data) {
+               Match.score = data;
+                }
+            });
+	 	
+	 }
+	};
+	 Match.init();
+})();
+
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
