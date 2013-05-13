@@ -17,9 +17,8 @@
 	</script>		
 </ul>
 
-
+<script type="text/javascript" src="knockout-2.2.1.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-
 <script>
 
 (function() {
@@ -31,36 +30,36 @@
 	 	},
 	 	fetchMatchInfo: function  () {
 	 		$.ajax({
-        url: 'http://dynamic.pulselive.com/dynamic/data/bcci/2013/ipl2013/customTweet.js?_' + (new Date()).getTime() + '=',
-        dataType: 'jsonp',
-        jsonpCallback: 'onCustomTweet',
-        success: function (data) {
- 			Match.updateMatchNumber(data);
- 			Match.showScore();
-        }
-	 	});
-	 },
-	 updateMatchNumber : function (data) {
-	 	// update the match number
-	    this.matchNumber = data.text[data.text.search("Match") + 6] + data.text[data.text.search("Match") + 7];
-	 },
-	 showScore: function () {
-	 	var k = this.getScore();
-	 	console.log(k);
-	 },
-	 getScore: function () {
+				url: 'http://dynamic.pulselive.com/dynamic/data/bcci/2013/ipl2013/customTweet.js?_' + (new Date()).getTime() + '=',
+				dataType: 'jsonp',
+				jsonpCallback: 'onCustomTweet',
+				success: function (data) {
+						Match.updateMatchNumber(data);
+						Match.showScore();
+					}
+				});
+		},
+		updateMatchNumber : function (data) {
+			// update the match number
+			this.matchNumber = data.text[data.text.search("Match") + 6] + data.text[data.text.search("Match") + 7];
+		},
+		showScore: function () {
+			this.getScore();
+		},
+		getScore: function () {
 	 	        $.ajax({
-            url: 'http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2013/ipl2013-' + this.matchNumber + '/scoring.js?_' + (new Date()).getTime() + '=',
-            dataType: 'jsonp',
-            jsonpCallback: 'onScoring',
-            success: function (data) {
-               Match.score = data;
-                }
-            });
+				url: 'http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2013/ipl2013-' + this.matchNumber + '/scoring.js?_' + (new Date()).getTime() + '=',
+				dataType: 'jsonp',
+				jsonpCallback: 'onScoring',
+				success: function (data) {
+					self.team1 = data.matchInfo.teams[0].team.fullName,
+					self.team2 = data.matchInfo.teams[1].team.fullName;
+				}
+			});
 	 	
-	 }
+		}
 	};
-	 Match.init();
+	Match.init();
 })();
 
 </script>

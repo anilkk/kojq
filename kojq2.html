@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>IPL Match score</title>
+</head>
+<body>
+
+<div data-binding="with: score">
+    <span data-bind="text: team1"></span> V/S <span data-bind="text: team2"></span> <br/>
+    Match Number - <span data-bind="text: matchNumber"></span>
+</div>
+
+<script type="text/javascript" src="knockout-2.2.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>
+
+
+   function IplMatch () {
+    var self = this;
+     self.team1 =  ko.observable();
+     self.team2 =  ko.observable();
+     self.score =  ko.observable();
+     self.matchNumber =  ko.observable(self.matchNumber);
+    
+    
+    self.getMatchInfo = function () {
+        $.ajax({
+		url: 'http://dynamic.pulselive.com/dynamic/data/bcci/2013/ipl2013/customTweet.js?_' + (new Date()).getTime() + '=',
+		dataType: 'jsonp',
+		jsonpCallback: 'onCustomTweet',
+		success: function (data) {
+					self.updateMatchNumber(data);
+					self.showScore();
+				    }
+	    });
+    };
+    
+    self.updateMatchNumber = function (data) {
+        self.matchNumber = data.text[data.text.search("Match") + 6] + data.text[data.text.search("Match") + 7];
+    };
+        
+    self.showScore = function () {
+        $.ajax({
+		url: 'http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2013/ipl2013-' + self.matchNumber + '/scoring.js?_' + (new Date()).getTime() + '=',
+		dataType: 'jsonp',
+		jsonpCallback: 'onScoring',
+		success: function (data) {
+                    self.score = data;
+		    self.team1 = ko.observable(data.matchInfo.teams[0].team.fullName);
+                    self.team2 = ko.observable(data.matchInfo.teams[1].team.fullName);
+		    console.log(self.score);
+                    console.log(self.team1);
+                    console.log(self.team2);
+		}
+	});
+    };
+    self.getMatchInfo();
+   }
+   ko.applyBindings(new IplMatch());
+
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
